@@ -7,7 +7,7 @@ I am trying to model the over/under scores of NBA regular season games. This inv
 This has been solved before by looking at individual player performance and how it affects the team overall. Since basketball has evolved over the years, from relying on big men to now relying more on shooters, only more recent seasons are used (past 15-20 seasons). There are also more advanced statistics that can be used, such as player positioning, efficiency vs. different heights, etc.
 
 ### What is new about your approach, why do you think it will be successful?
-Since this has been so widely modeled, and because I do not have an extended period of time for this capstone project I will not be able to approach this problem in a new way. 
+Since this has been so widely modeled, and because I do not have an extended period of time for this capstone project I will not be able to approach this problem in a new way. I will use points per game (PPG), assists per game (APG), steals per game (SPG), rebounds per game (RPG), blocks per game (BPG), possessions per game, etc.
 
 ### If you're successful, what will the impact be?
 With the Supreme Court’s ruling on sports betting, many places will want to be able to model this line as accurately as possible, because it is a very popular type of bet. On the other side of the coin, there are many people who would like to be able to make more informed bets.
