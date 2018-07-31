@@ -22,4 +22,4 @@ The data comes from ESPN box scores. I have scraped the past 15 regular seasons 
 Problems that may occur involve factoring in injuries, fatigue, resting players, and home court advantage.  The period in which the game occurs will almost surely have a big effect on the scores.
 
 ### What is the next thing you need to work on?
-Doing EDA is the next step in the process. Also, a few season failed when scraping so I need to go back through those season.
+I need to obtain possessions per game. After that doing EDA is the next step in the process. Also, a few season failed when scraping so I need to go back through those season.
