@@ -97,3 +97,20 @@ def get_team_avgs(season):
             'FT_made','FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]/82
     game_avgs['AVG_score']=grouped_teams.sum()['PTS']/82
     return game_avgs
+
+def get_avgs_home_vs_away(season):
+    """
+    input: dataframe of season
+
+    get team average stats based on away vs home games
+
+    output: dataframe containing these stats
+    """
+    small_df=season[['game_id','team','home_team','Total_PTS']]
+    grouped_teams_home = season.groupby(['team','home_team'])
+    avgs = grouped_teams_home.sum()[['AST','BLK','DREB','OREB','PF','REB','STL','TO',
+            'FT_made','FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]/41
+    avgs['AVG_score']=grouped_teams_home.sum()['PTS']/41
+    joined_data = small_df.join(avgs,on=['team','home_team'])
+    grouped_join = joined_data.groupby(['game_id','team']).mean()
+    return grouped_join
