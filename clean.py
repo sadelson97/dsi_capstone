@@ -15,10 +15,10 @@ def create_hometeam(season):
     for group in list(grouped.groups.fromkeys(season['game_id']).keys()): #need the game_id in the same order as the dataframe
         values = grouped.groups[group].get_values()
         home_team.append([False if season.iloc[values]['team'].iloc[i] ==  season.iloc[values]['team'].iloc[0] else True for i in range(len(values))])
-        home_team = [item for sublist in home_team for item in sublist] #need to flatten list of lists into just a single list
+    home_team = [item for sublist in home_team for item in sublist] #need to flatten list of lists into just a single list
     season['home_team']=pd.Series(home_team)
 
-def make_days_after_opener(season):
+def calc_days_after_opener(season):
     """
     input: dataframe of season
 
