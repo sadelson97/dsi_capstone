@@ -2,6 +2,13 @@ import pandas as pd
 import numpy as np
 from dateutil.parser import parse
 
+def change_pos_position(season): #some season have position labeled as pos
+    try:
+        season['Position']=season['Pos']
+        season.drop('Pos',axis=1,inplace=True)
+    except:
+        pass
+
 def create_hometeam(season):
     """
     input: dataframe of season
@@ -100,6 +107,21 @@ def get_team_avgs(season):
     game_avgs['AVG_score']=grouped_teams.sum()['PTS']/82
     return game_avgs
 
+def get_team_avgs(season): #for 2011/2012 season (nba lock out)
+    """
+    input: dataframe of season
+
+    get teams average stats
+
+    output: dataframe containing average stats
+    """
+    grouped_teams = season.groupby('team')
+    game_avgs=pd.DataFrame(grouped_teams.sum())
+    game_avgs = game_avgs[['AST','BLK','DREB','OREB','PF','REB','STL','TO',
+            'FT_made','FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]/82
+    game_avgs['AVG_score']=grouped_teams.sum()['PTS']/66
+    return game_avgs
+
 def get_avgs_home_vs_away(season):
     """
     input: dataframe of season
@@ -113,6 +135,23 @@ def get_avgs_home_vs_away(season):
     avgs = grouped_teams_home.sum()[['AST','BLK','DREB','OREB','PF','REB','STL','TO',
             'FT_made','FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]/41
     avgs['AVG_score']=grouped_teams_home.sum()['PTS']/41
+    joined_data = small_df.join(avgs,on=['team','home_team'])
+    grouped_join = joined_data.groupby(['game_id','team']).mean()
+    return grouped_join
+
+def get_avgs_home_vs_away(season):
+    """
+    input: dataframe of season
+
+    get team average stats based on away vs home games
+
+    output: dataframe containing these stats
+    """
+    small_df=season[['game_id','team','home_team','Total_PTS']]
+    grouped_teams_home = season.groupby(['team','home_team'])
+    avgs = grouped_teams_home.sum()[['AST','BLK','DREB','OREB','PF','REB','STL','TO',
+            'FT_made','FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]/41
+    avgs['AVG_score']=grouped_teams_home.sum()['PTS']/33
     joined_data = small_df.join(avgs,on=['team','home_team'])
     grouped_join = joined_data.groupby(['game_id','team']).mean()
     return grouped_join
@@ -136,6 +175,7 @@ def all_clean(season):
 
     output: cleaned dataframe
     """
+    change_pos_position(season)
     change_teamname(season)
     create_hometeam(season)
     calc_days_from_opener(season)
