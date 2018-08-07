@@ -21,7 +21,8 @@ def create_clusters(df1=None,df2=None,df3=None):
     s_comb=game_avgs3
     s_comb=s_comb.append(game_avgs2).append(game_avgs1)
     s_comb=s_comb.groupby('team').mean()
-    s_comb_norm=normalize(s_comb)
+    s_comb_norm = s_comb.drop(['FT_made','3PT_made','FG_made'],axis=1)
+    s_comb_norm=normalize(s_comb_norm)
     km = KMeans(n_clusters=5,n_init=20)
     km.fit(s_comb_norm)
     return s_comb, km

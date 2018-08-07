@@ -25,6 +25,7 @@ def create_hometeam(season):
     home_team = [item for sublist in home_team for item in sublist] #need to flatten list of lists into just a single list
     season['home_team']=pd.Series(home_team)
 
+
 def calc_days_from_opener(season):
     """
     input: dataframe of season
@@ -105,6 +106,7 @@ def get_team_avgs(season):
     game_avgs = game_avgs[['AST','BLK','DREB','OREB','PF','REB','STL','TO',
             'FT_made','FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]/82
     game_avgs['AVG_score']=grouped_teams.sum()['PTS']/82
+    game_avgs['Possessions']=game_avgs['FG_attempts']+game_avgs['TO'] #add estimate for possessions
     return game_avgs
 
 def get_team_avgs_2012(season): #for 2011/2012 season (nba lock out)
@@ -118,8 +120,9 @@ def get_team_avgs_2012(season): #for 2011/2012 season (nba lock out)
     grouped_teams = season.groupby('team')
     game_avgs=pd.DataFrame(grouped_teams.sum())
     game_avgs = game_avgs[['AST','BLK','DREB','OREB','PF','REB','STL','TO',
-            'FT_made','FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]/82
+            'FT_made','FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]/66
     game_avgs['AVG_score']=grouped_teams.sum()['PTS']/66
+    game_avgs['Possessions']=game_avgs['FG_attempts']+game_avgs['TO'] #add estimate for possessions
     return game_avgs
 
 def get_avgs_home_vs_away(season):
