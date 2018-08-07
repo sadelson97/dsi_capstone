@@ -41,6 +41,7 @@ def make_splits(season):
 
     season.fillna('0',inplace=True) #string so it can be split later
     season['Min']=season['Min'].map(lambda x: '0' if x.find('DNP')!= -1 else x)
+    season['Min']=season['Min'].map(lambda x: '0' if x.find('Did')!= -1 else x)
 
     season['FT_made']=season['FT'].map(lambda x: x.split('-')[0])
     season['FT_attempts']=season['FT'].map(lambda x: x.split('-')[-1]) #when filled na with '0'
@@ -62,6 +63,7 @@ def convert_to_int(season):
     output: dataframe with ints
     """
     season=season[season['Min']!='--'] #drop rows where all stats are ---
+    season['+/-']=season['+/-'].map(lambda x: '0' if x == '--' else x) #some seasons don't have +/-
     season[['+/-','AST','BLK','DREB','Min','OREB','PF','PTS','REB','STL','TO','FT_made',
             'FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]=season[['+/-',
             'AST','BLK','DREB','Min','OREB','PF','PTS','REB','STL','TO','FT_made',
@@ -114,3 +116,30 @@ def get_avgs_home_vs_away(season):
     joined_data = small_df.join(avgs,on=['team','home_team'])
     grouped_join = joined_data.groupby(['game_id','team']).mean()
     return grouped_join
+
+def change_teamname(season):
+    """
+    input: dataframe of season
+
+    Supersonics switched cities and names to Thunder
+
+    output: none
+    """
+
+    season['team']=season['team'].map(lambda x: 'Thunder' if x == 'SuperSonics' else x)
+
+def all_clean(season):
+    """
+    input: dataframe of season
+
+    combine all functions into one
+
+    output: cleaned dataframe
+    """
+    change_teamname(season)
+    create_hometeam(season)
+    calc_days_from_opener(season)
+    make_splits(season)
+    season=convert_to_int(season)
+    season=add_total_score(season)
+    return season
