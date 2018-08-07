@@ -160,12 +160,24 @@ def change_teamname(season):
     """
     input: dataframe of season
 
-    Supersonics switched cities and names to Thunder
+    Supersonics switched cities and names to Thunder, Bobcats to Hornets
 
     output: none
     """
 
     season['team']=season['team'].map(lambda x: 'Thunder' if x == 'SuperSonics' else x)
+    season['team']=season['team'].map(lambda x: 'Hornets' if x == 'Bobcats' else x)
+
+def change_hornets_pelicans(season): #use for 2004-2013
+    """
+    input: dataframe of season
+
+    The Hornets refer to two different teams. From 2002-2013 it was
+    New Orleans, which are now the pelicans
+
+    output: none
+    """
+    season['team']=season['team'].map(lambda x: 'Pelicans' if x == 'Hornets' else x)
 
 def all_clean(season):
     """
@@ -176,6 +188,24 @@ def all_clean(season):
     output: cleaned dataframe
     """
     change_pos_position(season)
+    change_teamname(season)
+    create_hometeam(season)
+    calc_days_from_opener(season)
+    make_splits(season)
+    season=convert_to_int(season)
+    season=add_total_score(season)
+    return season
+
+def all_clean_pels(season):
+    """
+    input: dataframe of season
+
+    combine all functions into one for when the pelicans were the hornets
+
+    output: cleaned dataframe
+    """
+    change_pos_position(season)
+    change_hornets_pelicans(season)
     change_teamname(season)
     create_hometeam(season)
     calc_days_from_opener(season)
