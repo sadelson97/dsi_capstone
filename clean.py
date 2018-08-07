@@ -107,7 +107,7 @@ def get_team_avgs(season):
     game_avgs['AVG_score']=grouped_teams.sum()['PTS']/82
     return game_avgs
 
-def get_team_avgs(season): #for 2011/2012 season (nba lock out)
+def get_team_avgs_2012(season): #for 2011/2012 season (nba lock out)
     """
     input: dataframe of season
 
@@ -139,7 +139,7 @@ def get_avgs_home_vs_away(season):
     grouped_join = joined_data.groupby(['game_id','team']).mean()
     return grouped_join
 
-def get_avgs_home_vs_away(season):
+def get_avgs_home_vs_away_2012(season):
     """
     input: dataframe of season
 
