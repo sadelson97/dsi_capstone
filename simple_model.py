@@ -34,6 +34,13 @@ class MyModel():
         self.away_avgs = away
 
     def simple_model(self,season_for_model,season1,season2,season3,n_clusters=4):
+        '''
+        input: data from of season to model and 3 previous seasons
+
+        build the lasso model
+
+        output: none
+        '''
         #self.season=season_for_model
         add_clusters(season1,season2,season3,n_clusters)
         model = season_for_model[['game_id','home_team','team','Total_PTS','days_after_opener']]
@@ -49,6 +56,13 @@ class MyModel():
         self.model = las
 
     def predict(self,season_for_model):
+        '''
+        input: season you are predicting for
+
+        predict total scores
+
+        output: predictions
+        '''
         model = season_for_model[['game_id','home_team','team','Total_PTS','days_after_opener']]
         hmodel=model[model['home_team']==1].join(self.home_avgs,on='team')
         amodel=model[model['home_team']==0].join(self.away_avgs,on='team')
