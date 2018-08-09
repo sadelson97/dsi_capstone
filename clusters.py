@@ -34,4 +34,4 @@ def create_clusters(df1=None,df2=None,df3=None,n_clusters = 5):
     s_comb_norm=normalize(s_comb_norm)
     km = KMeans(n_clusters=n_clusters,n_init=20)
     km.fit(s_comb_norm)
-    return home,away, km
+    return s_comb, home, away, km
