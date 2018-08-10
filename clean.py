@@ -72,8 +72,8 @@ def convert_to_int(season):
     """
     season=season[season['Min']!='--'] #drop rows where all stats are ---
     season['+/-']=season['+/-'].map(lambda x: '0' if x == '--' else x) #some seasons don't have +/-
-    season[['+/-','AST','BLK','DREB','Min','OREB','PF','PTS','REB','STL','TO','FT_made',
-            'FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]=season[['+/-',
+    season[['+/-','home_team','AST','BLK','DREB','Min','OREB','PF','PTS','REB','STL','TO','FT_made',
+            'FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]=season[['+/-','home_team',
             'AST','BLK','DREB','Min','OREB','PF','PTS','REB','STL','TO','FT_made',
             'FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']].astype(int)
     return season
@@ -104,26 +104,26 @@ def get_team_avgs(season):
     grouped_teams = season.groupby('team')
     game_avgs=pd.DataFrame(grouped_teams.sum())
     game_avgs = game_avgs[['AST','BLK','DREB','OREB','PF','REB','STL','TO',
-            'FT_made','FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]/82
-    game_avgs['AVG_score']=grouped_teams.sum()['PTS']/82
+            'FT_made','FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]/(len(season.groupby(['game_id','team']).mean())/30)
+    game_avgs['AVG_score']=grouped_teams.sum()['PTS']/(len(season.groupby(['game_id','team']).mean())/30)
     game_avgs['Possessions']=game_avgs['FG_attempts']+game_avgs['TO'] #add estimate for possessions
     return game_avgs
 
-def get_team_avgs_2012(season): #for 2011/2012 season (nba lock out)
-    """
-    input: dataframe of season
-
-    get teams average stats
-
-    output: dataframe containing average stats
-    """
-    grouped_teams = season.groupby('team')
-    game_avgs=pd.DataFrame(grouped_teams.sum())
-    game_avgs = game_avgs[['AST','BLK','DREB','OREB','PF','REB','STL','TO',
-            'FT_made','FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]/66
-    game_avgs['AVG_score']=grouped_teams.sum()['PTS']/66
-    game_avgs['Possessions']=game_avgs['FG_attempts']+game_avgs['TO'] #add estimate for possessions
-    return game_avgs
+# def get_team_avgs_2012(season): #for 2011/2012 season (nba lock out)
+#     """
+#     input: dataframe of season
+#
+#     get teams average stats
+#
+#     output: dataframe containing average stats
+#     """
+#     grouped_teams = season.groupby('team')
+#     game_avgs=pd.DataFrame(grouped_teams.sum())
+#     game_avgs = game_avgs[['AST','BLK','DREB','OREB','PF','REB','STL','TO',
+#             'FT_made','FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]/66
+#     game_avgs['AVG_score']=grouped_teams.sum()['PTS']/66
+#     game_avgs['Possessions']=game_avgs['FG_attempts']+game_avgs['TO'] #add estimate for possessions
+#     return game_avgs
 
 def get_avgs_home_vs_away(season):
     """
@@ -134,30 +134,39 @@ def get_avgs_home_vs_away(season):
     output: dataframe containing these stats
     """
     small_df=season[['game_id','team','home_team','Total_PTS']]
-    grouped_teams_home = season.groupby(['team','home_team'])
-    avgs = grouped_teams_home.sum()[['AST','BLK','DREB','OREB','PF','REB','STL','TO',
-            'FT_made','FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]/41
-    avgs['AVG_score']=grouped_teams_home.sum()['PTS']/41
-    joined_data = small_df.join(avgs,on=['team','home_team'])
-    grouped_join = joined_data.groupby(['game_id','team']).mean()
-    return grouped_join
+    grouped_teams_home = season[season['home_team']==1].groupby('team')
+    grouped_teams_away = season[season['home_team']==0].groupby('team')
+    avgs_home = grouped_teams_home.sum()[['+/-','AST','BLK','DREB','OREB','PF','REB','STL','TO',
+            'FT_made','FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]/(len(season.groupby(['game_id','team']).mean())/60)
+    avgs_home['+/-']=avgs_home['+/-']/5
+    avgs_home['AVG_score']=grouped_teams_home.sum()['PTS']/(len(season.groupby(['game_id','team']).mean())/60)
+    avgs_home['Possessions']=avgs_home['FG_attempts']+avgs_home['TO'] #add estimate for possessions
+    avgs_away = grouped_teams_away.sum()[['+/-','AST','BLK','DREB','OREB','PF','REB','STL','TO',
+            'FT_made','FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]/(len(season.groupby(['game_id','team']).mean())/60)
+    avgs_away['+/-']=avgs_away['+/-']/5
+    avgs_away['AVG_score']=grouped_teams_away.sum()['PTS']/(len(season.groupby(['game_id','team']).mean())/60)
+    avgs_away['Possessions']=avgs_away['FG_attempts']+avgs_away['TO'] #add estimate for possessions
 
-def get_avgs_home_vs_away_2012(season):
-    """
-    input: dataframe of season
+    # joined_data = small_df.join(avgs,on=['team','home_team'])
+    # grouped_join = joined_data.groupby(['game_id','team']).mean()
+    return avgs_home,avgs_away #grouped_join
 
-    get team average stats based on away vs home games
-
-    output: dataframe containing these stats
-    """
-    small_df=season[['game_id','team','home_team','Total_PTS']]
-    grouped_teams_home = season.groupby(['team','home_team'])
-    avgs = grouped_teams_home.sum()[['AST','BLK','DREB','OREB','PF','REB','STL','TO',
-            'FT_made','FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]/41
-    avgs['AVG_score']=grouped_teams_home.sum()['PTS']/33
-    joined_data = small_df.join(avgs,on=['team','home_team'])
-    grouped_join = joined_data.groupby(['game_id','team']).mean()
-    return grouped_join
+# def get_avgs_home_vs_away_2012(season):
+#     """
+#     input: dataframe of season
+#
+#     get team average stats based on away vs home games
+#
+#     output: dataframe containing these stats
+#     """
+#     small_df=season[['game_id','team','home_team','Total_PTS']]
+#     grouped_teams_home = season.groupby(['team','home_team'])
+#     avgs = grouped_teams_home.sum()[['AST','BLK','DREB','OREB','PF','REB','STL','TO',
+#             'FT_made','FT_attempts','3PT_made','3PT_attempts','FG_made','FG_attempts']]/41
+#     avgs['AVG_score']=grouped_teams_home.sum()['PTS']/33
+#     joined_data = small_df.join(avgs,on=['team','home_team'])
+#     grouped_join = joined_data.groupby(['game_id','team']).mean()
+#     return grouped_join
 
 def change_teamname(season):
     """
@@ -181,6 +190,9 @@ def change_hornets_pelicans(season): #use for 2004-2013
     output: none
     """
     season['team']=season['team'].map(lambda x: 'Pelicans' if x == 'Hornets' else x)
+
+
+
 
 def all_clean(season):
     """
