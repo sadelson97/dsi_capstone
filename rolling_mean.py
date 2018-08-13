@@ -28,7 +28,7 @@ def get_team_games(df,team):
     return team_df
 
 
-def rolling_means(team_df,games_back=10,needed_games=10):
+def rolling_means(team_df,games_back=7,needed_games=5):
     '''
     input: team dataframe
 
@@ -41,7 +41,7 @@ def rolling_means(team_df,games_back=10,needed_games=10):
     return roll.shift(1)
 
 
-def all_team_rolling(df,games_back=10,games_needed=10):
+def all_team_rolling(df,games_back=7,games_needed=5):
     '''
     input: season dataframe
 
@@ -49,6 +49,17 @@ def all_team_rolling(df,games_back=10,games_needed=10):
 
     return: dictionary containing all rolling mean dataframes
     '''
+    df['PTS_scored']= df.groupby(['days_after_opener','game_id','team']).sum()['PTS']
+    diffs = df['PTS']-df['PTS_scored']
+    df.drop('PTS_scored',axis=1,inplace=True)
+    diffs_even = diffs[::2].values
+    diffs_odd = diffs[1::2].values
+    fixed_diff=[]
+    for i in range(len(diffs_odd)):
+        fixed_diff.append(diffs_odd[i])
+        fixed_diff.append(diffs_even[i])
+    fixed_diff=pd.Series(fixed_diff,index=diffs.index)
+    df['DEF_PTS']=fixed_diff
     games = group_dataframe(df)
     team_roll={}
     for team in games.index.get_level_values('team'):
@@ -57,7 +68,7 @@ def all_team_rolling(df,games_back=10,games_needed=10):
     return team_roll
 
 
-def complete_rolling_means(df,games_back=10,games_needed=10):
+def complete_rolling_means(df,games_back=7,games_needed=5):
     '''
     input: season dataframe
 
