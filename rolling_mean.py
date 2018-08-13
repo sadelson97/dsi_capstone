@@ -28,7 +28,7 @@ def get_team_games(df,team):
     return team_df
 
 
-def rolling_means(team_df,games_back=10,needed_games=5):
+def rolling_means(team_df,games_back=10,needed_games=10):
     '''
     input: team dataframe
 
@@ -41,7 +41,7 @@ def rolling_means(team_df,games_back=10,needed_games=5):
     return roll.shift(1)
 
 
-def all_team_rolling(df):
+def all_team_rolling(df,games_back=10,games_needed=10):
     '''
     input: season dataframe
 
@@ -53,11 +53,11 @@ def all_team_rolling(df):
     team_roll={}
     for team in games.index.get_level_values('team'):
         t = get_team_games(games,team)
-        team_roll[team]=rolling_means(t)
+        team_roll[team]=rolling_means(t,games_back,games_needed)
     return team_roll
 
 
-def complete_rolling_means(df):
+def complete_rolling_means(df,games_back=10,games_needed=10):
     '''
     input: season dataframe
 
@@ -66,7 +66,7 @@ def complete_rolling_means(df):
     output: dataframe with games and rolling means for teams
     '''
 
-    team_roll = all_team_rolling(df)
+    team_roll = all_team_rolling(df,games_back,games_needed)
     frames = []
     for team in team_roll:
         frames.append(team_roll[team])
