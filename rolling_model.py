@@ -39,4 +39,4 @@ def model(X_train,X_test,y_train,y_test,alpha,tol):
     comp_df['predictions']=preds
     comp_df['differences']=comp_df['real']-comp_df['predictions']
     avg_diff=sum(np.abs(y_test-preds))/len(preds)
-    return rsqr,avg_diff,comp_df
+    return las,rsqr,avg_diff,comp_df
