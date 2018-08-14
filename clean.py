@@ -25,7 +25,6 @@ def create_hometeam(season):
     home_team = [item for sublist in home_team for item in sublist] #need to flatten list of lists into just a single list
     season['home_team']=pd.Series(home_team)
 
-
 def calc_days_from_opener(season):
     """
     input: dataframe of season
