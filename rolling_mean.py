@@ -11,6 +11,7 @@ def group_dataframe(df):
     output: dataframe grouped by days, game_id, team
     '''
     games=df.groupby(['days_after_opener','game_id','team']).sum()
+    #games = games[games['Min']<250] #need to figure this out
     games['+/-']/=5
     return games
 
