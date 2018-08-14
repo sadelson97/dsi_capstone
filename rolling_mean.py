@@ -37,6 +37,17 @@ def rolling_means(team_df,games_back=7,needed_games=5):
     output: rolling mean
     '''
     roll = team_df.rolling(games_back,needed_games).mean()
+    roll['PTS_scored']= team_df.groupby(['days_after_opener','game_id','team']).sum()['PTS']
+    diffs = roll['PTS']-roll['PTS_scored']
+    roll.drop('PTS_scored',axis=1,inplace=True)
+    diffs_even = diffs[::2].values
+    diffs_odd = diffs[1::2].values
+    fixed_diff=[]
+    for i in range(len(diffs_odd)):
+        fixed_diff.append(diffs_odd[i])
+        fixed_diff.append(diffs_even[i])
+    fixed_diff=pd.Series(fixed_diff,index=diffs.index).rolling(games_back,needed_games).mean()
+    roll['DEF_PTS']=fixed_diff
     roll.drop('Total_PTS',axis=1,inplace=True)
     return roll.shift(1)
 
@@ -49,17 +60,6 @@ def all_team_rolling(df,games_back=7,games_needed=5):
 
     return: dictionary containing all rolling mean dataframes
     '''
-    df['PTS_scored']= df.groupby(['days_after_opener','game_id','team']).sum()['PTS']
-    diffs = df['PTS']-df['PTS_scored']
-    df.drop('PTS_scored',axis=1,inplace=True)
-    diffs_even = diffs[::2].values
-    diffs_odd = diffs[1::2].values
-    fixed_diff=[]
-    for i in range(len(diffs_odd)):
-        fixed_diff.append(diffs_odd[i])
-        fixed_diff.append(diffs_even[i])
-    fixed_diff=pd.Series(fixed_diff,index=diffs.index)
-    df['DEF_PTS']=fixed_diff
     games = group_dataframe(df)
     team_roll={}
     for team in games.index.get_level_values('team'):
