@@ -6,7 +6,7 @@ from sklearn.linear_model import Lasso
 from sklearn.model_selection import GridSearchCV
 
 
-def get_train_test(season,games_back=7,games_needed=5):
+def get_train_test(season,games_back=7,games_needed=5,train=False):
     roll_season = rm.complete_rolling_means(season,games_back,games_needed)
     mat = roll_season.as_matrix()
     df_mat = []
@@ -15,14 +15,16 @@ def get_train_test(season,games_back=7,games_needed=5):
     cols = ('team1_'+roll_season.columns).append('team2_'+roll_season.columns)
     roll_season.index.get_level_values('game_id')[::2]
     df = pd.DataFrame(df_mat,columns=cols,index=roll_season.index.get_level_values('game_id')[::2])
-    df.drop(['team2_Total_PTS','team1_Min','team2_Min','team1_home_team','team2_home_team',
+    if train:
+        df = df[df['team1_overtime']==False]
+    df.drop(['team2_Total_PTS','team1_Min','team2_Min','team1_home_team','team2_home_team','team2_overtime','team1_overtime',
             'team1_starter','team2_starter'],axis=1,inplace=True)
     df_use = df[100:]
-    return df_use, train_test_split(df_use.drop('team1_Total_PTS',axis=1),df_use['team1_Total_PTS'],test_size=.5)
+    return df_use#, train_test_split(df_use.drop('team1_Total_PTS',axis=1),df_use['team1_Total_PTS'],test_size=.5)
 
 
 def find_params(X_train,y_train):
-    parameters = {'alpha':[.9,.91,.92,.93,.94,.95,.96,.97,.98,.99,1,1.01,1.02], 'normalize':[True, False],'tol':[.001,.002,.003,.00005,.00001,.0005,.0001]}
+    parameters = {'alpha':[.9,.92,.94,.96,.98,1,1.02,1.04,1.06,1.08,1.1,1.5],'tol':[.001,.002,.003,.00005,.00001,.0005,.0001]}
     las = Lasso()
     clf = GridSearchCV(las, parameters)
     clf.fit(X_train,y_train)
