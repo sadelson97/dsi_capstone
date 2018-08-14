@@ -49,8 +49,11 @@ def rolling_means(team_df,games_back=7,needed_games=5):
         fixed_diff.append(diffs_even[i])
     fixed_diff=pd.Series(fixed_diff,index=diffs.index).rolling(games_back,needed_games).mean()
     roll['DEF_PTS']=fixed_diff
+    overtime = team_df['Min']>250
+    roll=roll.shift(1)
+    roll['overtime']=pd.Series(overtime)
     roll.drop('Total_PTS',axis=1,inplace=True)
-    return roll.shift(1)
+    return roll
 
 
 def all_team_rolling(df,games_back=7,games_needed=5):
