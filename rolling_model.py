@@ -8,17 +8,17 @@ from sklearn.model_selection import GridSearchCV
 
 def get_train_test(season,games_back=7,games_needed=5):
     roll_season = rm.complete_rolling_means(season,games_back,games_needed)
-    roll_season['PTS_scored']= season.groupby(['days_after_opener','game_id','team']).sum()['PTS']
-    diffs = roll_season['PTS']-roll_season['PTS_scored']
-    roll_season.drop('PTS_scored',axis=1,inplace=True)
-    diffs_even = diffs[::2].values
-    diffs_odd = diffs[1::2].values
-    fixed_diff=[]
-    for i in range(len(diffs_odd)):
-        fixed_diff.append(diffs_odd[i])
-        fixed_diff.append(diffs_even[i])
-    fixed_diff=pd.Series(fixed_diff,index=diffs.index)
-    roll_season['DEF_PTS']=fixed_diff
+    # roll_season['PTS_scored']= season.groupby(['days_after_opener','game_id','team']).sum()['PTS']
+    # diffs = roll_season['PTS']-roll_season['PTS_scored']
+    # roll_season.drop('PTS_scored',axis=1,inplace=True)
+    # diffs_even = diffs[::2].values
+    # diffs_odd = diffs[1::2].values
+    # fixed_diff=[]
+    # for i in range(len(diffs_odd)):
+    #     fixed_diff.append(diffs_odd[i])
+    #     fixed_diff.append(diffs_even[i])
+    # fixed_diff=pd.Series(fixed_diff,index=diffs.index)
+    # roll_season['DEF_PTS']=fixed_diff
     mat = roll_season.as_matrix()
     df_mat = []
     for i in range(int(len(mat)/2)):
@@ -29,7 +29,7 @@ def get_train_test(season,games_back=7,games_needed=5):
     df.drop(['team2_Total_PTS','team1_Min','team2_Min','team1_home_team','team2_home_team',
             'team1_starter','team2_starter'],axis=1,inplace=True)
     df_use = df[100:]
-    return roll_season,df, train_test_split(df_use.drop('team1_Total_PTS',axis=1),df_use['team1_Total_PTS'],test_size=.5)
+    return df, train_test_split(df_use.drop('team1_Total_PTS',axis=1),df_use['team1_Total_PTS'],test_size=.5)
 
 
 def find_params(X_train,y_train):
