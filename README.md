@@ -26,6 +26,6 @@ The final model I used was a Lasso model. It picked up obvious statistics such a
 
 My model predictions are, on average, 14.07 points from the actual score while Vegas's predictions are 13.75 points from the actual.
 As I have come this close, some more work is required to get all the way to Vegas's 
-
+<img src="model_result_pics/My_predictions.pictClipping" alt="pandas">
 ### Future Work
 In order to obtain better results, I need to continue doing feature engineering. This includes, but is not limited to, creating features for resting/injury of top scorers, team fatigue, and other defensive statistics. There are also statistics that I would not be able to feature engineer with the data that I have, such as average time per possession, average shot distance, drives per game, and others. As these could be important features, I need to collect more data.
