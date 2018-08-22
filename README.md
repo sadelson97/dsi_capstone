@@ -25,7 +25,7 @@ With the Supreme Court’s ruling on sports betting, many places will want to be
 The final model I used was a Lasso model. It picked up obvious statistics such as average points per game and field goal attempts, but it also picked up some of my feature engineered statistics
 
 My model predictions are, on average, 14.07 points from the actual score while Vegas's predictions are 13.75 points from the actual.
-![Alt text]/model_result_pics/Pictureclipping.pictClipping)
+![Alt text](model_result_pics/Pictureclipping.pictClipping)
 
 ### Future Work
 In order to obtain better results, I need to continue doing feature engineering. This includes, but is not limited to, creating features for resting/injury of top scorers, team fatigue, and other defensive statistics. There are also statistics that I would not be able to feature engineer with the data that I have, such as average time per possession, average shot distance, drives per game, and others. As these could be important features, I need to collect more data.
