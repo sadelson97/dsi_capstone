@@ -19,7 +19,10 @@ Vegas sports betting is a multi billion dollar industry. As it is this big, they
 ### Data Collection
 I used BeautifulSoup to scrape ESPN boxscores since the 2004 season and then stored them as CSV files. Each season is about 3 megabytes, for a total of 45 megabytes.
 
-The way the data is collected is as individual player statistics, so feature engineering is required to get the data into the team statistics that I need it to be in.
+The way the data is collected is as individual player statistics (figure 1), so feature engineering is required to get the data into a rolling mean of team statistics that I need it to be in (figure 2).
+
+<img src="images/unclean_data.png" alt="Figure 1">
+<img src="images/rollingmean.png" alt="Figure 2">
 
 ### Model results
 The final model I used was a Lasso model. It picked up obvious statistics such as average points per game and field goal attempts, but it also picked up some of my feature engineered statistics
